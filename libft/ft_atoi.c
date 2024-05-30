@@ -19,33 +19,42 @@ int	ft_isspace(int c)
 
 static long	str_to_int64_within_range(const char *str, int flag)
 {
-	unsigned long	result;
+	unsigned long	res;
+	unsigned long	ul_max;
+	unsigned long	num;
 
-	result = 0;
+	res = 0;
+	num = 0;
+	ul_max = (unsigned long)LONG_MAX;
 	while (*str && ft_isdigit(*str))
 	{
-		if (!flag && result > (unsigned long)LONG_MAX - (*str - '0') / 10)
+		num = *str - '0';
+		if (!flag && res > ul_max / 10)
 			return (LONG_MAX);
-		else if (flag && result > (unsigned long)LONG_MIN - (*str - '0') / 10)
+		else if (!flag && res == ul_max / 10 && num > ul_max % 10)
+			return (LONG_MAX);
+		else if (flag && res > ul_max / 10)
 			return (LONG_MIN);
-		result = result * 10 + *str++ - '0';
+		else if (flag && res == ul_max / 10 && num > (ul_max + 1) % 10)
+			return (LONG_MIN);
+		res = res * 10 + *str++ - '0';
 	}
-	return (result);
+	return (res);
 }
 
 int	ft_atoi(const char *str)
 {
 	int		sign;
-	long	result;
+	long	res;
 
 	sign = 0;
-	result = 0;
+	res = 0;
 	while (*str && ft_isspace(*str))
 		str++;
 	if (*str == '-' || *str == '+')
 		sign = (*str++ == '-');
-	result = str_to_int64_within_range(str, sign);
+	res = str_to_int64_within_range(str, sign);
 	if (sign)
-		result = -result;
-	return ((int)result);
+		res = -res;
+	return ((int)res);
 }
